@@ -1,12 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
 source ./.env
 
-docker-compose \
-    exec \
-    server-1 \
+# should not -it
+docker-compose exec shell \
     mysql \
     --user=${MYSQL_USER} \
     --password=${MYSQL_PASSWORD} \

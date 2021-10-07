@@ -19,13 +19,24 @@ const mysqlPort = '${MYSQL_PORT}';
 const clusterName = '${MYSQL_CLUSTER_NAME}';
 const clusterOptions = JSON.parse('${MYSQL_CLUSTER_OPTIONS}');
 const cluster = dba.createCluster(clusterName, clusterOptions);
-cluster.addInstance({user: mysqlUser, password: mysqlPassword, host: 'server-2'});
-cluster.addInstance({user: mysqlUser, password: mysqlPassword, host: 'server-3'});
+// or clone or default is auto, since 8.0.17.
+cluster.addInstance('root:mysql@server-2', {recoveryMethod: 'incremental'});
+cluster.addInstance('root:mysql@server-3', {recoveryMethod: 'incremental'});
 EOF
 
-echo "Attempting to create cluster."
+if ( echo 'cluster.status()' | mysqlsh \
+  --cluster --password=mysql \
+  --user=${MYSQL_USER} \
+  --password=${MYSQL_PASSWORD} \
+  --host=server-1 \
+  --port=${MYSQL_PORT}
+)
+then
+  echo "Cluster creation done before."
+else
+  echo "Attempting to create cluster."
 
-until ( \
+  until ( \
     mysqlsh \
         --user=${MYSQL_USER} \
         --password=${MYSQL_PASSWORD} \
@@ -33,8 +44,8 @@ until ( \
         --port=${MYSQL_PORT} \
         --interactive \
         --file=/tmp/create-cluster.js \
-)
-do
+  )
+  do
     echo "Cluster creation failed."
 
     if [ $SECONDS -gt $MAX_TIME ]
@@ -46,7 +57,9 @@ do
 
     echo "Sleeping for $SLEEP_TIME seconds."
     sleep $SLEEP_TIME
-done
+  done
+fi
 
-echo "Cluster created."
 echo "Exiting."
+# bash "$@"
+sleep infinity & wait

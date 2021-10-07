@@ -6,6 +6,7 @@ services:
     image: "mysql/mysql-server:${MYSQL_VERSION}"
     container_name: "server-1"
     hostname: "server-1"
+    user: $UID:$GID
     ports:
       - "30001:3306"
       - "40001:33060"
@@ -49,6 +50,7 @@ services:
     image: "mysql/mysql-server:${MYSQL_VERSION}"
     container_name: "shell"
     hostname: "shell"
+    user: $UID:$GID
     entrypoint: "/bin/shell-entrypoint"
     environment: &other-environment
       - MYSQL_USER
@@ -69,6 +71,7 @@ services:
     image: "mysql/mysql-router:${MYSQL_VERSION}"
     container_name: "router"
     hostname: "router"
+    user: $UID:$GID
     ports:
       - "6446:6446"
       - "6447:6447"

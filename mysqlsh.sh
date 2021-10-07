@@ -1,13 +1,16 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
 source ./.env
 
-docker-compose \
-    exec \
-    server-1 \
+# docker run --rm -it mysql/mysql-server:${MYSQL_VERSION} mysqlsh \
+# should not -it
+docker-compose exec shell \
     mysqlsh \
+    --cluster \
     --user=${MYSQL_USER} \
     --password=${MYSQL_PASSWORD} \
+    --host=router \
+    --port=6446 \
     "$@"
