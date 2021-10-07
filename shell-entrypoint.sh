@@ -17,7 +17,7 @@ const mysqlUser = '${MYSQL_USER}';
 const mysqlPassword = '${MYSQL_PASSWORD}';
 const mysqlPort = '${MYSQL_PORT}';
 const clusterName = '${MYSQL_CLUSTER_NAME}';
-const clusterOptions = JSON.parse(${MYSQL_CLUSTER_OPTIONS});
+const clusterOptions = JSON.parse('${MYSQL_CLUSTER_OPTIONS}');
 const cluster = dba.createCluster(clusterName, clusterOptions);
 cluster.addInstance({user: mysqlUser, password: mysqlPassword, host: 'server-2'});
 cluster.addInstance({user: mysqlUser, password: mysqlPassword, host: 'server-3'});
