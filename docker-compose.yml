@@ -6,7 +6,7 @@ services:
     image: "mysql/mysql-server:${MYSQL_VERSION}"
     container_name: "server-1"
     hostname: "server-1"
-    user: $UID:$GID
+    # user: $UID:$GID
     ports:
       - "30001:3306"
       - "40001:33060"
@@ -50,7 +50,7 @@ services:
     image: "mysql/mysql-server:${MYSQL_VERSION}"
     container_name: "shell"
     hostname: "shell"
-    user: $UID:$GID
+    # user: $UID:$GID
     entrypoint: "/bin/shell-entrypoint"
     environment: &other-environment
       - MYSQL_USER
@@ -71,7 +71,7 @@ services:
     image: "mysql/mysql-router:${MYSQL_VERSION}"
     container_name: "router"
     hostname: "router"
-    user: $UID:$GID
+    # user: $UID:$GID
     ports:
       - "6446:6446"
       - "6447:6447"
@@ -83,11 +83,26 @@ services:
 
   prometheus-exporter:
     image: "prom/mysqld-exporter"
-    container_name: "monitor"
-    hostname: "monitor"
+    container_name: "server-exporter"
+    hostname: "server-exporter"
+    profiles: [exporter]
     ports:
       - "9104:9104"
     environment:
       DATA_SOURCE_NAME: "${MYSQL_USER}:${MYSQL_PASSWORD}@(${MYSQL_HOST}:${MYSQL_PORT})/"
     depends_on: *other-depends
     restart: always
+
+  phpmysqladmin:
+    image: phpmyadmin:5.1.0
+    hostname: "server-phpmysqladmin"
+    container_name: "server-phpmysqladmin"
+    profiles: [webtool]
+    environment:
+      - PMA_HOSTS=router:6446, router:6447, server-1, server-2, server-3
+      - PMA_user=root
+      - PMA_PASSWORD=mysql
+      - UPLOAD_LIMIT=10M
+    ports:
+      - "3305:80"
+

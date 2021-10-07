@@ -60,6 +60,6 @@ else
   done
 fi
 
-echo "Exiting."
+echo "Sleep infinity..."
 # bash "$@"
 sleep infinity & wait
