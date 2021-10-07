@@ -4,6 +4,8 @@ version: "3.7"
 services:
   server-1: &server
     image: "mysql/mysql-server:${MYSQL_VERSION}"
+    container_name: "server-1"
+    hostname: "server-1"
     ports:
       - "30001:3306"
       - "40001:33060"
@@ -19,6 +21,8 @@ services:
 
   server-2:
     <<: *server
+    container_name: "server-2"
+    hostname: "server-2"
     ports:
       - "30002:3306"
       - "40002:33060"
@@ -30,6 +34,8 @@ services:
 
   server-3:
     <<: *server
+    container_name: "server-3"
+    hostname: "server-3"
     ports:
       - "30003:3306"
       - "40003:33060"
@@ -41,6 +47,8 @@ services:
 
   shell:
     image: "mysql/mysql-server:${MYSQL_VERSION}"
+    container_name: "shell"
+    hostname: "shell"
     entrypoint: "/bin/shell-entrypoint"
     environment: &other-environment
       - MYSQL_USER
@@ -59,6 +67,8 @@ services:
 
   router:
     image: "mysql/mysql-router:${MYSQL_VERSION}"
+    container_name: "router"
+    hostname: "router"
     ports:
       - "6446:6446"
       - "6447:6447"
@@ -70,6 +80,8 @@ services:
 
   prometheus-exporter:
     image: "prom/mysqld-exporter"
+    container_name: "monitor"
+    hostname: "monitor"
     ports:
       - "9104:9104"
     environment:
